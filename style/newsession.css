@@ -1,0 +1,59 @@
+/*Este archivo CSS contiene estilos juveniles e innovadores con tonos azulados para la página de inicio de sesión de la aplicación de foro. Se utiliza una paleta de colores azules y grises, así como tipografía limpia y moderna.*/
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f8;
+    color: #1c2b36;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Estilos del formulario */
+  form {
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  h1 {
+    color: #1a6cb1;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  label {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  input {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    border: 1px solid #cfd8dd;
+  }
+  
+  input[type="submit"] {
+    background-color: #1a6cb1;
+    border: none;
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  input[type="submit"]:hover {
+    background-color: #0e4d8b;
+  }
+  
