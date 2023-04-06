@@ -1,20 +1,12 @@
 <?php
 
-// Configuración y conexión a la base de datos
-$servername = "localhost";
-$username = "root";
-$password = "";
-
-$conn = new mysqli($servername, $username, $password);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+// Incluir la configuración de la base de datos
+include 'db_config.php';
 
 // Crear base de datos si no existe
-$sql = "CREATE DATABASE IF NOT EXISTS papeleria CHARACTER SET utf8;";
+$sql = "CREATE DATABASE IF NOT EXISTS $dbname CHARACTER SET utf8;";
 if ($conn->query($sql) === TRUE) {
-    echo "Base de datos 'papeleria' creada correctamente<br>";
+    echo "Base de datos 'forum' creada correctamente<br>";
 } else {
     echo "Error al crear la base de datos: " . $conn->error;
 }
@@ -22,59 +14,75 @@ if ($conn->query($sql) === TRUE) {
 // Seleccionar base de datos
 $conn->select_db($dbname);
 
-// Crear tabla Categoria si no existe
-$sql = "CREATE TABLE IF NOT EXISTS Categoria (
-  id_categoria INT AUTO_INCREMENT PRIMARY KEY,
-  nombre_categoria VARCHAR(50)
+// Crear tabla Usuarios si no existe
+$sql = "CREATE TABLE IF NOT EXISTS Usuarios (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(255) NOT NULL,
+    contraseña VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL
 );";
 if ($conn->query($sql) === TRUE) {
-    echo "Tabla 'Categoria' creada correctamente<br>";
+    echo "Tabla 'Usuarios' creada correctamente<br>";
 } else {
-    echo "Error al crear la tabla 'Categoria': " . $conn->error;
+    echo "Error al crear la tabla 'Usuarios': " . $conn->error;
 }
 
-// Crear tabla Articulo si no existe
-$sql = "CREATE TABLE IF NOT EXISTS Articulo (
-id_articulo INT AUTO_INCREMENT PRIMARY KEY,
-nombre_articulo VARCHAR(50),
-descripcion_articulo VARCHAR(255),
-precio_articulo DECIMAL(10,2),
-stock_articulo INT,
-id_categoria INT,
-foto_articulo_url VARCHAR(255),
-FOREIGN KEY (id_categoria) REFERENCES Categoria(id_categoria)
+// Crear tabla Categorias si no existe
+$sql = "CREATE TABLE IF NOT EXISTS Categorias (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    descripcion VARCHAR(255) NOT NULL
 );";
 if ($conn->query($sql) === TRUE) {
-echo "Tabla 'Articulo' creada correctamente<br>";
+    echo "Tabla 'Categorias' creada correctamente<br>";
 } else {
-echo "Error al crear la tabla 'Articulo': " . $conn->error;
+    echo "Error al crear la tabla 'Categorias': " . $conn->error;
 }
 
-// Crear tabla Usuario si no existe
-$sql = "CREATE TABLE IF NOT EXISTS Usuario (
-id_usuario INT(11) AUTO_INCREMENT PRIMARY KEY,
-nombre_usuario VARCHAR(50),
-correo_usuario VARCHAR(50),
-contraseña_usuario VARCHAR(255)
+// Crear tabla Preguntas si no existe
+$sql = "CREATE TABLE IF NOT EXISTS Preguntas (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    texto TEXT NOT NULL,
+    fecha DATE NOT NULL,
+    usuario_id INT NOT NULL,
+    categoria_id INT NOT NULL,
+    FOREIGN KEY (usuario_id) REFERENCES Usuarios(id),
+    FOREIGN KEY (categoria_id) REFERENCES Categorias(id)
 );";
 if ($conn->query($sql) === TRUE) {
-echo "Tabla 'Usuario' creada correctamente<br>";
+    echo "Tabla 'Preguntas' creada correctamente<br>";
 } else {
-echo "Error al crear la tabla 'Usuario': " . $conn->error;
+    echo "Error al crear la tabla 'Preguntas': " . $conn->error;
+}
+
+// Crear tabla Respuestas si no existe
+$sql = "CREATE TABLE IF NOT EXISTS Respuestas (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    texto TEXT NOT NULL,
+    fecha DATE NOT NULL,
+    pregunta_id INT NOT NULL,
+    usuario_id INT NOT NULL,
+    FOREIGN KEY (pregunta_id) REFERENCES Preguntas(id),
+    FOREIGN KEY (usuario_id) REFERENCES Usuarios(id)
+);";
+if ($conn->query($sql) === TRUE) {
+    echo "Tabla 'Respuestas' creada correctamente<br>";
+} else {
+    echo "Error al crear la tabla 'Respuestas': " . $conn->error;
 }
 
 // Generar el hash de la contraseña "superuser"
 $password = "superuser";
 $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-// Insertar el usuario 'superuser' en la tabla 'Usuario' si no existe
-$sql = "INSERT INTO Usuario (id_usuario, nombre_usuario, correo_usuario, contraseña_usuario)
-SELECT 1, 'superuser', 'superuser@example.com', '$password_hash'
-WHERE NOT EXISTS (SELECT * FROM Usuario WHERE id_usuario = 1);";
+// Insertar el usuario 'superuser' en la tabla 'Usuarios' si no existe
+$sql = "INSERT INTO Usuarios (nombre, contraseña, email)
+SELECT 'superuser', '$password_hash', 'superuser@example.com'
+FROM DUAL
+WHERE NOT EXISTS (SELECT * FROM Usuarios WHERE email = 'superuser@example.com');";
 if ($conn->query($sql) === TRUE) {
-echo "Usuario 'superuser' insertado correctamente<br>";
+    echo "Usuario 'superuser' insertado correctamente<br>";
 } else {
-echo "Error al insertar el usuario 'superuser': " . $conn->error;
+    echo "Error al insertar el usuario 'superuser': " . $conn->error;
 }
 
 // Cerrar conexión
